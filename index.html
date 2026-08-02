@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Letters to a Friend Not Yet Born</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --seal:#A87F7F; --sealbg:#F4E9E9;
+    --open:#7FA99B; --openbg:#E7F1EB;
+    --wait:#B08A6E; --waitbg:#F5EDE5;
+    --ink:#32352F; --ink-soft:#6C7069; --ink-faint:#9B9890;
+    --paper:#FBFAF7; --card:#FFF; --line:#E3E1D9; --cream:#F3F1E8;
+    --sans:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+    --hand:'EB Garamond','Cormorant Garamond','Iowan Old Style',Georgia,'Times New Roman',serif;
+    --script:'Tangerine','EB Garamond',Georgia,cursive;
+    --parch:#F4E9D2;
+    --parch-ink:#3B3226;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16.5px;line-height:1.6}
+  .wrap{width:100%;padding:0 30px;max-width:1400px;margin:0 auto}
+  @media(max-width:640px){.wrap{padding:0 16px}}
+
+  header{position:sticky;top:0;z-index:50;padding:13px 0 11px;
+         background:linear-gradient(180deg,#F1F3F0,#F7F8F5);border-bottom:1px solid var(--line)}
+  header .inner{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+  .eyebrow{font-size:.63rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 3px;font-weight:700}
+  h1{font-size:clamp(1.3rem,3vw,1.85rem);margin:0;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+  .progress{font-size:.76rem;color:var(--ink-soft);text-align:right;line-height:1.4}
+  .progress b{display:block;font-size:1.35rem;color:var(--ink);font-weight:800;line-height:1.1}
+
+  .intro{padding:26px 0 6px}
+  .intro p{margin:0 0 11px;font-size:.97rem;color:var(--ink-soft);line-height:1.6}
+  .intro p b{color:var(--ink)}
+
+  .shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:14px;padding:16px 0 40px}
+  .env{border:1.5px solid var(--line);border-radius:14px;background:var(--card);padding:0;overflow:hidden;
+       text-align:left;font:inherit;cursor:pointer;transition:.18s;display:flex;flex-direction:column;min-height:172px}
+  .env:disabled{cursor:default}
+  .env .flap{height:8px;background:var(--line)}
+  .env .body{padding:15px 17px 16px;flex:1;display:flex;flex-direction:column}
+  .env .n{font-size:.63rem;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--ink-faint);margin-bottom:7px}
+  .env .t{font-size:.98rem;font-weight:700;line-height:1.32;margin-bottom:8px}
+  .env .s{font-size:.79rem;color:var(--ink-soft);line-height:1.45;margin-top:auto}
+  .env .wax{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+            font-size:.86rem;font-weight:800;margin-bottom:9px;letter-spacing:-.02em}
+
+  .env.avail{border-color:#A9C8B8}
+  .env.avail .flap{background:var(--open)}
+  .env.avail:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(60,70,60,.09)}
+  .env.avail .wax{background:var(--openbg);color:#3B6353}
+  .env.done{background:#FAFAF7;border-color:var(--line)}
+  .env.done .flap{background:#CFD8D2}
+  .env.done .wax{background:#EDEBE3;color:#8A877E}
+  .env.done .t{color:var(--ink-soft)}
+  .env.locked{background:#FAF7F7;border-color:#E0D2D2;border-style:dashed}
+  .env.locked .flap{background:#E0D2D2}
+  .env.locked .wax{background:var(--sealbg);color:var(--seal)}
+  .env.locked .t{color:#B2A5A5}
+  .env.waiting{background:#FBF7F2;border-color:#E4D4C2;border-style:solid}
+  .env.waiting .flap{background:var(--wait)}
+  .env.waiting .wax{background:var(--waitbg);color:#8A6642}
+  .env.waiting .t{color:#9C8674}
+  .env.waiting .t{color:#9C8674}
+
+  /* reading view — a sheet of parchment on a desk */
+  .reader{position:fixed;inset:0;z-index:100;overflow-y:auto;display:none;
+          background:#6E6455;
+          background-image:radial-gradient(ellipse at 50% 0%, #7E7364 0%, #625948 70%, #524A3C 100%)}
+  .reader.show{display:block}
+  .reader .outer{max-width:760px;margin:0 auto;padding:22px 20px 90px}
+  .reader .back{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.32);border-radius:9px;
+                padding:8px 15px;font:inherit;font-family:var(--sans);font-size:.8rem;cursor:pointer;
+                color:#F1EADC;margin-bottom:20px;backdrop-filter:blur(4px)}
+  .reader .back:hover{background:rgba(255,255,255,.2);border-color:#fff}
+
+  .sheet{
+    position:relative;
+    background-color:var(--parch);
+    background-image:
+      radial-gradient(circle at 18% 12%, rgba(180,150,100,.16) 0%, transparent 32%),
+      radial-gradient(circle at 82% 26%, rgba(170,140,95,.14) 0%, transparent 30%),
+      radial-gradient(circle at 34% 68%, rgba(185,155,105,.13) 0%, transparent 34%),
+      radial-gradient(circle at 74% 88%, rgba(165,135,90,.15) 0%, transparent 30%),
+      radial-gradient(circle at 8% 90%, rgba(190,165,120,.12) 0%, transparent 26%),
+      linear-gradient(155deg, #F8EFDC 0%, #F2E6CC 38%, #F6ECD8 62%, #EFE2C4 100%);
+    padding:56px clamp(28px,6vw,72px) 60px;
+    border-radius:3px;
+    box-shadow:
+      inset 0 0 60px rgba(150,120,75,.18),
+      inset 0 0 140px rgba(160,130,85,.10),
+      0 2px 3px rgba(0,0,0,.22),
+      0 18px 44px rgba(0,0,0,.34);
+  }
+  .sheet:before,.sheet:after{content:'';position:absolute;left:0;right:0;height:10px;pointer-events:none}
+  .sheet:before{top:-1px;background:
+    repeating-linear-gradient(90deg, rgba(120,95,55,.12) 0 6px, transparent 6px 15px)}
+  .sheet:after{bottom:-1px;background:
+    repeating-linear-gradient(90deg, transparent 0 9px, rgba(120,95,55,.12) 9px 17px)}
+
+  .reader .n{font-family:var(--sans);font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;
+             font-weight:800;color:#9A8663;margin:0 0 10px}
+  .reader h2{font-family:var(--script);font-size:clamp(2.5rem,7vw,3.9rem);line-height:1.06;margin:0 0 34px;
+             font-weight:700;color:#4A3B26;letter-spacing:.01em}
+  .reader .rule{height:1px;background:linear-gradient(90deg,rgba(120,95,55,.42),rgba(120,95,55,.06));margin:0 0 30px}
+  .reader p{font-family:var(--hand);font-size:1.24rem;line-height:1.82;margin:0 0 19px;color:var(--parch-ink);
+            text-rendering:optimizeLegibility;font-feature-settings:"liga","kern"}
+  .reader p b{font-weight:600;color:#2F281D}
+  .reader p em{font-style:italic}
+  .reader p.sig{margin-top:30px;font-style:italic;font-size:1.3rem;color:#5A4B34}
+
+  .sit{margin-top:44px;border-top:1px solid rgba(120,95,55,.3);padding:30px 0 4px;text-align:center;background:none}
+  .sit h3{margin:0 0 6px;font-size:.98rem;font-weight:750;color:#5A4B34;font-family:var(--sans)}
+  .sit p{font-family:var(--sans);font-size:.85rem;color:#7A6A50;margin:0 0 16px;line-height:1.5}
+  .clock{font-family:var(--hand);font-size:3.2rem;font-weight:400;letter-spacing:.02em;color:#5A4B34;line-height:1;
+         margin:6px 0 14px;font-variant-numeric:tabular-nums}
+  .ring{width:100%;height:5px;border-radius:4px;background:rgba(120,95,55,.18);overflow:hidden;margin-bottom:18px}
+  .ring i{display:block;height:100%;width:0;background:#8A7248;transition:width 1s linear}
+  .bigbtn{font-family:var(--sans);font-size:.9rem;font-weight:750;cursor:pointer;border-radius:11px;padding:13px 26px;
+          border:2px solid #8A7248;background:#8A7248;color:#F8F2E4;transition:.15s}
+  .bigbtn:hover{filter:brightness(1.08)}
+  .bigbtn.ghost{background:none;color:#6B5A3C}
+  .bigbtn:disabled{opacity:.4;cursor:default}
+  .sit .after{display:none} .sit.done .during{display:none} .sit.done .after{display:block}
+
+  .tools{border-top:1px solid var(--line);background:#F5F6F2;padding:22px 0 46px;margin-top:20px}
+  .tools h3{font-size:.95rem;margin:0 0 8px;font-weight:750}
+  .tools p{font-size:.85rem;color:var(--ink-soft);margin:0 0 12px;line-height:1.55}
+  .tools .row{display:flex;gap:10px;flex-wrap:wrap}
+  .tbtn{font:inherit;font-size:.82rem;font-weight:650;cursor:pointer;border-radius:9px;padding:9px 15px;
+        border:1.5px solid var(--line);background:var(--card);color:var(--ink-soft)}
+  .tbtn:hover{border-color:var(--wait);color:#8A6642}
+  .banner{background:var(--waitbg);border-bottom:1px solid #E4D4C2;padding:9px 0;font-size:.82rem;color:#8A6642;display:none}
+  .banner.show{display:block}
+  .banner b{font-weight:800}
+</style>
+</head>
+<body>
+
+<div class="banner" id="banner"><div class="wrap"><b>Facilitator mode.</b> The pacing is off and every letter is open. This is for preparing a session, not for reading them yourself.</div></div>
+
+<header>
+  <div class="wrap inner">
+    <div>
+      <p class="eyebrow">Ten letters · Jeff Kisling</p>
+      <h1>Letters to a Friend Not Yet Born</h1>
+    </div>
+    <div class="progress"><b id="pcount">0 / 10</b><span id="pnext">Begin with the first letter</span></div>
+  </div>
+</header>
+
+<div class="wrap intro">
+  <p>These are addressed to a young Friend who will be twenty in 2046. I will not be alive then. That is the point of the form: I am writing past the people who can argue with me, to someone who cannot yet be protected from this.</p>
+  <p><b>They open one at a time, and the key is silence.</b> After you read a letter you will be asked to sit with it for two minutes, in the Quaker manner. Only then does it count as read, and only then does the next one unseal. That is not a gimmick. The whole argument of this project is that some things cannot be received quickly, and a page that let you swallow all ten in twenty minutes would be teaching the opposite of what the letters say.</p>
+  <p>Ten letters is twenty minutes of silence. If that sounds long, that is the point, and it is the shortest honest version of it.</p>
+  <p>There are no discussion questions. If a letter needs a worksheet it has failed.</p>
+</div>
+
+<div class="wrap"><div class="shelf" id="shelf"></div></div>
+
+<div class="tools">
+  <div class="wrap">
+    <h3>If you are running a group</h3>
+    <p>A First Day School teacher or youth group leader needs to read ahead, and a lock you cannot open is a gimmick rather than a discipline. So the key is here, plainly, rather than hidden — it opens all ten at once and skips the silences. Taking it turns the pacing off, and the pacing is most of what this page is for.</p>
+    <div class="row">
+      <button class="tbtn" id="facil" type="button">I am preparing a session — open all ten</button>
+      <button class="tbtn" id="reset" type="button">Start over</button>
+    </div>
+  </div>
+</div>
+
+<div class="reader" id="reader">
+  <div class="outer">
+  <button class="back" id="back" type="button">← Back to the letters</button>
+  <div class="sheet">
+    <p class="n" id="rn"></p>
+    <h2 id="rt"></h2>
+    <div class="rule"></div>
+    <div id="rb"></div>
+
+    <div class="sit" id="sit">
+      <div class="during">
+        <h3>Sit with this</h3>
+        <p>Two minutes of silence, in the Quaker manner. Then this letter counts as read, and the next one unseals.</p>
+        <div class="clock" id="clock">2:00</div>
+        <div class="ring"><i id="ring"></i></div>
+        <button class="bigbtn" id="startsit" type="button">Begin the silence</button>
+      </div>
+      <div class="after">
+        <h3>Read.</h3>
+        <p id="afterp"></p>
+        <button class="bigbtn ghost" id="backafter" type="button">Back to the letters</button>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<script>
+const LETTERS = [{"title":"The First Letter — Why I Am Writing to Someone Who Does Not Exist","paras":["Friend,","You are twenty and I am dead, and both of those facts make this easier to say.","I am writing to 2046 because the people I most need to reach are the ones who cannot answer back yet, and because everything I want to tell you was successfully kept from me until I was almost seventy. That is not a figure of speech. My religious society ran schools where Native children were stripped of their languages and their names, and some of those children died, and I did not learn it until my sixties, sitting in a tradition that considers itself unusually honest.","I want you to have at twenty what I got at sixty-eight. Not because you are better than I was. Because someone can tell you, and nobody told me.","Here is what I am afraid of. I am afraid that by 2046 this will have become a settled and comfortable topic — that it will be in the curriculum in the way that the Underground Railroad is in the curriculum, a thing Quakers feel good about knowing, taught in a way that produces no obligation. That would be the machine winning again in a new shape.","So read these slowly, and be suspicious of how easy they are.","One more thing before I start. I am not writing to make you feel bad. Guilt curls back toward the self; it is a closed loop, and it produces nothing that a wronged people could use. What I am after is obligation, which turns outward and has a name and a place attached to it.","Your Friend, Jeff"]},{"title":"The Second Letter — What My People Did","paras":["Friend,","Here is the hard thing, said plainly, because you are owed it plainly.","In 1869 the United States handed reservations and their schools to the Christian denominations. Friends accepted sixteen agencies between us. In the ledgers of the day the arrangement was called, without embarrassment, the Quaker Policy. From 1819 into the 1960s, Friends founded and operated at least thirty Indian day schools and boarding schools.","The curriculum was English, arithmetic, and unpaid labor. Read the words <em>manual labor institute</em> in a school's name and read them literally.","A Quaker agent named J. D. Miles signed transfer papers sending two hundred twenty-seven Arapaho and Cheyenne young people to Carlisle in his last four years at that post. Ten never came home.","A girl named Grace Yellowhair, fifteen, of the Arapaho Nation, was brought in March of 1883 to a rented storefront school in West Branch, Iowa, run by a Quaker couple who received a hundred sixty-seven dollars a year for each child. She died of malaria that September. She is buried in an unmarked grave in the Friends' section of the West Branch cemetery, beside Theodore Rogers, an eight-year-old Osage boy who had died of the same fever that June.","I attended a Quaker school two miles from that cemetery. I ran past it hundreds of times.","If you are a Friend reading this in 2046, that is your inheritance too. You do not get to accept the abolitionist courage of nineteenth-century Quakers you never met and decline this. It is one estate.","Your Friend, Jeff"]},{"title":"The Third Letter — Missing Is Not the Same as Withheld","paras":["Friend,","This is the most useful sentence I have, and I want you to have it early.","<em>Missing</em> knowledge is absent because you have not studied it. Study fills the gap.","<em>Withheld</em> knowledge has been kept on the other side of a boundary in order to protect a community's picture of itself. And you cannot study your way across a withholding, because it is not a gap in information. It is a break in a relationship.","Everything I found says withheld. The deaths were printed in the West Branch newspaper in 1883. The federal transfer ledgers were in the National Archives. Zitkála-Šá published her account of a Quaker school in <em>The Atlantic Monthly</em>, a national magazine, in 1900. A man named Louis Thomas Jones documented the local schools in 1914.","The history was in print, in public, and in the ground, and it did not reach me for fifty years.","And here is the fact that undid me. Twenty thousand pages of Quaker boarding-school ledgers sat unread and uncataloged in Friends' archives for over a century. Not a government's secret. Our boxes, in our buildings, kept by a people who keep excellent minutes, unopened.","A tradition does not accidentally fail to read its own papers for a hundred years.","So when you find yourself asking <em>how did I not know this?</em> — stop, and ask the other question. <em>Why was I not taught it?</em> The first question makes you the subject and has a comfortable answer waiting. The second one has something on the other side of it.","Your Friend, Jeff"]},{"title":"The Fourth Letter — Why Good People Did It","paras":["Friend,","You will want to conclude that the people who ran those schools were monsters. That conclusion is comfortable and useless, and it is comfortable precisely because you are not a monster, so it cannot be about you.","Friends did not take this work on in spite of our principles. We took it on because of them.","We had an abolitionist record and we knew it. We believed ourselves the humane alternative to the Army, and by the Army's standard we may have been right, which is exactly the problem. So dismantling a people's language and kinship and ceremony was not experienced as destruction. It was experienced as salvation.","Soldiers who kill know themselves to be killing. Teachers sincerely believed they were helping. That is why the belief passed down through the generations undisturbed, and why it reached me intact and unexamined at fifteen, at fifty, and very nearly at seventy. Nobody has to conspire to hide a thing they are proud of. They simply keep telling the version they are proud of, and after three generations it is the only version anyone has heard, and the boxes stay closed because nobody imagines there is anything in them worth the trouble.","Now the part that is about you.","Good intentions, sincere religious conviction, and a felt sense of divine sanction were all present in those schools. They were not sufficient. They were, in fact, the machinery.","Whatever you feel most certain about right now, in 2046, that certainty feels exactly the way theirs felt. That is not a reason to stop acting. It is a reason to be tested by people who are not you.","Your Friend, Jeff"]},{"title":"The Fifth Letter — What One Person With a Library Card Can Do","paras":["Friend,","Now something you can do this week, and I want to be emphatic about why it matters: <b>it costs no Native person anything.</b> Nobody has to teach you. Nobody has to relive anything for your education. You are going to a building and reading paper.","And in most counties nobody has done it.","Go to your county's burial records. Go to the local newspapers of the 1880s and after, which printed deaths as a matter of course. Go to the cemetery plat maps. Go to your meeting's own boxes, and your yearly meeting's, and your school's.","Read against the grain. The ledgers are not blank — that is what makes them work. They counted students, tallied bushels, praised improvements in deportment, and left out disease, abuse, active objection by the children, and grief. So you count arrivals against departures. You look for the child who appears in one census and never again. You cross a ledger against a newspaper, a cemetery record, a plat map. <b>The absence is the evidence.</b>","And then the part that makes it repair rather than scholarship. When you find names, the point is not a publication. The point is getting those names to the child's own nation. Then your part is over.","I watched Friends do exactly this. They found the unmarked graves at West Branch, handed the findings to the tribal nations, and stopped. On the twenty-second of July, 2024, Fred Mosqueda, Arapaho, came from Oklahoma with his family. Cedar was burned. There was a drum, and three songs, to release spirits that had waited a hundred and forty-one years.","The ceremony was not ours. The decisions were not ours. The waiting was the hardest discipline of all.","Every meeting in this country has its own Grace Yellowhair within a few miles. Find yours.","Your Friend, Jeff"]},{"title":"The Sixth Letter — Go First, and Ask for Nothing","paras":["Friend,","There is a way people behave when they want to be trusted quickly, and it does not work. They explain themselves. They establish their credentials. They mention what they have read.","Here is what worked, once, with one person, and I offer it as a report and not as a law.","On the second day of a ninety-four-mile walk across Iowa, I said something specific and factual about what my own people had done. Not a general emotional statement. A fact, with a hand in it. Then I did not ask for anything, and I stopped talking.","Hours later, on an empty road, a man I was beginning to know told me about his mother and the residential schools.","I cannot tell you what he said. It was given under conditions, and the conditions did not include being reproduced for the education of strangers. So the central evidence of my life's turning is sealed, and you should notice that, because it is the shape of this whole subject: I can show you everything up to the moment of trust and nothing inside it.","What I can verify is the sequence. I went first. I was specific. I asked for nothing. What came back was given later, on his terms.","Do that. And then be prepared for nothing to come back, ever, and to keep showing up anyway — because if you go first in order to receive something, you have not gone first. You have made an offer with an invoice attached.","Your Friend, Jeff"]},{"title":"The Seventh Letter — The Ordinary Saturday","paras":["Friend,","I want to tell you about the least interesting thing I have ever done, because it did more than anything dramatic.","For three years I packed food boxes on Saturday mornings with Des Moines Mutual Aid, under the mentorship of an Indigenous organizer named Ronnie James. He came into my life sideways: Friends in Iowa stood vigil for the Wet'suwet'en, and Bear Creek Friends Meeting sent a letter of support to British Columbia, and Ronnie walked up to that vigil to find out who in Iowa knew about the Wet'suwet'en at all.","That is the first thing to learn. <b>Channels deliver what they choose.</b> We built something to send support west, and what it delivered was a man walking east into our lives, and through him nearly everything that followed. You cannot know in advance what a channel will carry. Build honestly and let it decide.","The second thing is the Saturdays themselves. Anyone will come to the inspiring event. The test is the fourth consecutive Saturday in February when nothing interesting is happening and the boxes still need packing. People notice who is still there in year two, and that noticing is most of how trust actually gets built. There is no shortcut through it. I have looked for one.","And the third thing: take direction from whoever is directing, including on things you think you know. I am a scientist by training and I have organized many things in my life, and none of it was relevant to where the potatoes go.","Commit to a rhythm before you commit to a cause. One Saturday a month for a year is worth more than one inspired week.","Your Friend, Jeff"]},{"title":"The Eighth Letter — What I Cannot Give You","paras":["Friend,","I have to tell you the limits of this correspondence, because otherwise you will finish it and feel that you now know this, and that feeling is the most dangerous thing these letters could produce.","Here is what has not survived the trip into writing.","<b>What being corrected feels like in the body.</b> I can tell you that at a forum in 2018 a handout described ancient agriculture as \"simple,\" and Native marchers corrected it — many varieties of maize, developed here eleven hundred years ago. You now have the fact. You do not have the thing that happened in my chest, and that is what actually changed my reflexes.","<b>What it costs the other person.</b> The education of non-Native people is a cost borne by Native people. You can read that and agree with it. You will not feel it until you watch someone visibly decide whether you are worth the hour.","<b>The difference between reading about deference and taking direction at eight in the morning.</b> At a work week on an acre in Iowa City, the person telling you where to put the soil may be twenty-five. Reading about that changes nothing. Doing it for five days changes something.","<b>What repetition does to you.</b> A year of returning will change you, including changing what you think the work even is. I cannot compress a year.","<b>And what it is like to be given something.</b> The moment when someone decides to hand you what they carry cannot be described without spending it.","So these letters are a map to the room. They are not the room. Go find the room.","Your Friend, Jeff"]},{"title":"The Ninth Letter — On the Land You Already Love","paras":["Friend,","If you came to this through loving a place — a river, a woods, a farm, a mountain, a stretch of gravel road — then this letter is for you especially, because that is the widest door there is and almost nobody uses it.","I loved land my whole life. I worked farms as a boy. I ran hundreds of miles on Cedar County gravel. I gave up owning a car for forty-five years and cycled more than a thousand miles a year. I made photographs for fifty years, which is a discipline of looking at a place until you actually see it.","None of that was nothing. It reorganized how I ate and how I moved for most of my life.","But I want you to see the structure of it. What I had was a relationship between two terms: me, and a place. Aesthetic, athletic, laboring, attentive — and entirely unaccountable. Nobody could correct my reading of that landscape, because there was nobody in the relationship but me.","What was taken from Native nations was a relationship among three terms: a person, a place, and <em>a people</em>, running obligations in every direction.","So you are probably not estranged from land. You are estranged from its relations. Those are different diagnoses and they have different treatments. If the problem were estrangement from land, the cure would be more time outdoors, and many of us have tried that for decades.","Here is the turn, and it is not renunciation. Nobody is asking you to stop loving the place you love. If you can hike, paddle, plant, build trail, fix a bicycle, take photographs, or work outdoors all day — offer it, and offer it <em>without specifying how it should be used</em>. Let someone else decide whether it is useful today.","That last clause is the whole discipline.","Your Friend, Jeff"]},{"title":"The Tenth Letter — This Week","paras":["Friend,","Last one. Everything here can be begun without permission.","Go to the archive nobody has opened. Ask, in writing, what is in your meeting's boxes and what your school teaches about the nations whose land it sits on, and keep the answer. Find the standing door nearest you — an Indigenous-led organization, a distribution, a work week, a ceremony your meeting has long attended — and ask an open question you do not control the answer to: <em>how can I support your work?</em> Then do the specific thing named, on the timeline named, whether or not it is interesting. Come back on the ordinary week. Give money if you have money, recurring and unrestricted, treated like rent rather than a gift. Ask your meeting for a decision rather than a discussion — a minute, a line in the budget, a named person, a date.","And keep a ledger. What a settler actually has to give is labor under direction, institutional weight, recurring unrestricted money, and land. Sincerity is not on the list. Write down what you gave and what you withheld, and look at it once a year.","I will tell you what I withheld, so you know what this looks like from inside a long life. I gave labor, time, a platform, and a portion of my income. I did not give my savings, because I was afraid of being old and sick without capital in a society that discards people who lack it. That is a diagnosis of the system I lived in and it is not an excuse. Decide early — while your assets are small and your fear is not yet organized — what you intend to do differently.","Begin before you are ready. I was not ready either. I was sixty-eight and I had been wrong for fifty years, and the work took me anyway.","Your Friend, Jeff"]}];
+const SIT = 120; // seconds of silence before a letter counts as read
+const KEY  = 'lfnyb-v1';
+
+let S = load();
+function load(){
+  try { const r = JSON.parse(localStorage.getItem(KEY)); if (r && r.read) return r; } catch(e){}
+  return { read:{}, facil:false };
+}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+
+const $ = id => document.getElementById(id);
+const now = () => Date.now();
+
+function stateOf(i){                       // 0-based
+  if (S.read[i]) return 'done';
+  if (S.facil) return 'avail';
+  if (i === 0) return 'avail';
+  return S.read[i-1] ? 'avail' : 'locked';
+}
+function fmt(d){ return d.toLocaleDateString(undefined,{weekday:'long', month:'long', day:'numeric'}); }
+
+function render(){
+  const shelf = $('shelf'); shelf.innerHTML='';
+  LETTERS.forEach((L,i)=>{
+    const st = stateOf(i);
+    const b = document.createElement('button');
+    b.type='button'; b.className='env '+st; b.disabled = (st==='locked'||st==='waiting');
+    let sub, wax;
+    if (st==='done'){ wax='✓'; sub='Read '+fmt(new Date(S.read[i])); }
+    else if (st==='avail'){ wax='◦'; sub='Open this one'; }
+    else { wax='✦'; sub='Sealed until the letter before it has been sat with'; }
+    b.innerHTML = '<div class="flap"></div><div class="body">' +
+      '<div class="wax">'+wax+'</div>' +
+      '<div class="n">Letter '+(i+1)+' of 10</div>' +
+      '<div class="t">'+ (st==='locked' ? 'Sealed' : L.title) +'</div>' +
+      '<div class="s">'+sub+'</div></div>';
+    if (!b.disabled) b.addEventListener('click', ()=>open(i));
+    shelf.appendChild(b);
+  });
+
+  const n = Object.keys(S.read).length;
+  $('pcount').textContent = n + ' / 10';
+  const nextI = LETTERS.findIndex((_,i)=>stateOf(i)==='avail');
+  $('pnext').textContent = n===10 ? 'All ten read'
+    : nextI>=0 ? 'Letter '+(nextI+1)+' is open' : '';
+  $('banner').classList.toggle('show', !!S.facil);
+}
+
+let cur = null, timer = null;
+function open(i){
+  cur = i; const L = LETTERS[i];
+  $('rn').textContent = 'Letter '+(i+1)+' of 10';
+  $('rt').textContent = L.title;
+  $('rb').innerHTML = L.paras.map(p=>'<p'+(/^(Friend,$|Your Friend,)/.test(p)?' class="sig"':'')+'>'+p+'</p>').join('');
+  const sit = $('sit');
+  sit.style.display = S.read[i] ? 'none' : '';
+  sit.classList.remove('done');
+  $('clock').textContent='2:00'; $('ring').style.width='0'; $('startsit').disabled=false;
+  $('reader').classList.add('show'); window.scrollTo(0,0);
+}
+function close(){ $('reader').classList.remove('show'); if (timer) clearInterval(timer); timer=null; render(); }
+$('back').addEventListener('click', close);
+$('backafter').addEventListener('click', close);
+
+$('startsit').addEventListener('click', ()=>{
+  $('startsit').disabled = true;
+  let left = SIT;
+  const tick = ()=>{
+    const m = Math.floor(left/60), s = left%60;
+    $('clock').textContent = m+':'+String(s).padStart(2,'0');
+    $('ring').style.width = ((SIT-left)/SIT*100)+'%';
+    if (left<=0){
+      clearInterval(timer); timer=null;
+      S.read[cur] = now(); save();
+      const nxt = cur+1;
+      $('afterp').textContent = nxt < LETTERS.length
+        ? 'Letter '+(nxt+1)+' is unsealed. It will still be there tomorrow, and I would rather you left it until then.'
+        : 'That is the last of them. What happens next is not on this page.';
+      $('sit').classList.add('done');
+      render();
+    }
+    left--;
+  };
+  tick(); timer = setInterval(tick, 1000);
+});
+
+$('facil').addEventListener('click', ()=>{
+  if (S.facil){ S.facil=false; save(); render(); $('facil').textContent='I am preparing a session — open all ten'; return; }
+  if (confirm('This opens all ten letters at once and turns the pacing off.\n\nIt is here because a group leader needs to read ahead. If you are reading these for yourself, the pacing is the point.\n\nOpen all ten?')){
+    S.facil = true; save(); render(); $('facil').textContent='Turn facilitator mode off';
+  }
+});
+$('reset').addEventListener('click', ()=>{
+  if (confirm('Clear all progress and re-seal every letter?')){ S = { read:{}, facil:false }; save(); render(); }
+});
+
+if (S.facil) $('facil').textContent='Turn facilitator mode off';
+render();
+</script>
+</body>
+</html>
